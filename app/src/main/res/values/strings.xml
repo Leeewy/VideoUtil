@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">YouTubeUtil</string>
+
+    <string name="ok">OK</string>
+
+    <string name="youtube_player_error">Wystąpił problem z odtwarzaczem YouTube i zostanie on zamknięty</string>
+    <string name="internet_disable">Brak dostępu do internetu.</string>
+
+    <string-array name="nav_drawer_items">
+        <item >Strona główna</item>
+        <item >Zapisane pliki</item>
+        <item >Ustawienia</item>
+        <item >Informacje</item>
+        <item >Wyjście</item>
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_action_action_done</item>
+        <item>@drawable/ic_action_action_done</item>
+        <item>@drawable/ic_action_action_done</item>
+        <item>@drawable/ic_action_action_done</item>
+        <item>@drawable/ic_action_action_done</item>
+    </array>
+
+</resources>

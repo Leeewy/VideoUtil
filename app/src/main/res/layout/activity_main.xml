@@ -1,0 +1,16 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match_parent_match_parent"
+    android:orientation="vertical"
+    tools:context="com.lewy.youtubeutil.MainActivity">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/toolbar_layout"/>
+
+    <fragment
+        android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+        android:id="@+id/player_view"
+        style="@style/match_parent_match_parent" />
+
+</LinearLayout>
