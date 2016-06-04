@@ -2,10 +2,12 @@ package com.lewy.youtubeutil.fragments;
 
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,16 +26,20 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.lewy.youtubeutil.R;
 import com.lewy.youtubeutil.gui.NavigationDrawerItem;
 import com.lewy.youtubeutil.gui.NavigationDrawerListAdapter;
+import com.lewy.youtubeutil.interfaces.CurrentTimeCallback;
 import com.lewy.youtubeutil.managers.TimeCalculator;
+import com.lewy.youtubeutil.managers.YouTubeCurrentTimeManager;
 
 import java.util.ArrayList;
 
 /**
  * Created by dawid on 15.05.2016.
  */
-public class YouTubeDialogFragment extends DialogFragment {
+public class YouTubeDialogFragment extends DialogFragment implements CurrentTimeCallback {
 
     private static final String TAG = "YouTubeDialogFragment";
+
+    private static final int MILISECOND = 1000;
 
     private NavigationDrawerListAdapter navigationDrawerListAdapter;
     protected DrawerLayout mDrawerLayout;
@@ -55,7 +61,11 @@ public class YouTubeDialogFragment extends DialogFragment {
     private YouTubePlayerSupportFragment youTubePlayerSupportFragment;
     private YouTubePlayer youTubePlayer;
 
+    private AsyncTask youTubeCurrentTimeManager;
+
     private boolean playing;
+
+    private boolean trackingTouch;
 
     public static YouTubeDialogFragment newInstance(){
         YouTubeDialogFragment youTubeDialogFragment = new YouTubeDialogFragment();
@@ -143,6 +153,24 @@ public class YouTubeDialogFragment extends DialogFragment {
         maxTimeView = (TextView) v.findViewById(R.id.max_time);
 
         seekBar = (SeekBar) v.findViewById(R.id.seek_bar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(trackingTouch) {
+                    youTubePlayer.seekToMillis(progress * MILISECOND);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                trackingTouch = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                trackingTouch = false;
+            }
+        });
 
         videoTitle = (TextView) v.findViewById(R.id.video_title);
     }
@@ -162,7 +190,9 @@ public class YouTubeDialogFragment extends DialogFragment {
     }
 
     private void setMaxTime() {
-        maxTimeView.setText(TimeCalculator.secondsToString(youTubePlayer.getDurationMillis() / 1000));
+        int max = youTubePlayer.getDurationMillis() / MILISECOND;
+        maxTimeView.setText(TimeCalculator.secondsToString(max));
+        seekBar.setMax(max);
     }
 
     private void setVideoTitle(String s) {
@@ -173,35 +203,47 @@ public class YouTubeDialogFragment extends DialogFragment {
     private void hideYouTubeLoader(boolean isBuffering) {
         ViewGroup ytView = (ViewGroup)youTubePlayerSupportFragment.getView();
         ProgressBar progressBar;
+
         try {
-            // As of 2016-02-16, the ProgressBar is at position 0 -> 3 -> 2 in the view tree of the Youtube Player Fragment
             ViewGroup child1 = (ViewGroup)ytView.getChildAt(0);
             ViewGroup child2 = (ViewGroup)child1.getChildAt(3);
             progressBar = (ProgressBar)child2.getChildAt(2);
         } catch (Throwable t) {
-            // As its position may change, we fallback to looking for it
             progressBar = findProgressBar(ytView);
-            // TODO I recommend reporting this problem so that you can update the code in the try branch: direct access is more efficient than searching for it
         }
 
         int visibility = isBuffering ? View.VISIBLE : View.INVISIBLE;
         if (progressBar != null) {
             progressBar.setVisibility(visibility);
-            // Note that you could store the ProgressBar instance somewhere from here, and use that later instead of accessing it again.
         }
     }
 
     private ProgressBar findProgressBar(View view) {
         if (view instanceof ProgressBar) {
-            return (ProgressBar)view;
+            return (ProgressBar) view;
         } else if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup)view;
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 ProgressBar res = findProgressBar(viewGroup.getChildAt(i));
-                if (res != null) return res;
+                if (res != null) {
+                    return res;
+                }
             }
         }
         return null;
+    }
+
+    private void startGettingCurrentTime() {
+        YouTubeCurrentTimeManager youTubeCurrentTimeManager = new YouTubeCurrentTimeManager();
+        youTubeCurrentTimeManager.setYouTubePlayer(youTubePlayer);
+        youTubeCurrentTimeManager.setCurrentTimeCallback(this);
+        this.youTubeCurrentTimeManager = youTubeCurrentTimeManager.execute();
+    }
+
+    private void stopGettingCurrentTime() {
+        if(youTubeCurrentTimeManager != null) {
+            youTubeCurrentTimeManager.cancel(true);
+        }
     }
 
     private YouTubePlayer.PlayerStateChangeListener playerStateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
@@ -220,10 +262,12 @@ public class YouTubeDialogFragment extends DialogFragment {
         public void onVideoStarted() {
             changePlayStopButtons();
             setMaxTime();
+            startGettingCurrentTime();
         }
 
         @Override
         public void onVideoEnded() {
+            stopGettingCurrentTime();
             changePlayStopButtons();
         }
 
@@ -233,13 +277,19 @@ public class YouTubeDialogFragment extends DialogFragment {
 
     private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {
         @Override
-        public void onPlaying() {}
+        public void onPlaying() {
+            startGettingCurrentTime();
+        }
 
         @Override
-        public void onPaused() {}
+        public void onPaused() {
+            stopGettingCurrentTime();
+        }
 
         @Override
-        public void onStopped() {}
+        public void onStopped() {
+            stopGettingCurrentTime();
+        }
 
         @Override
         public void onBuffering(boolean b) {
@@ -249,4 +299,18 @@ public class YouTubeDialogFragment extends DialogFragment {
         @Override
         public void onSeekTo(int i) {}
     };
+
+    @Override
+    public void receivedCurrentTime(final int currentTime) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int current = currentTime / MILISECOND;
+                currentTimeView.setText(TimeCalculator.secondsToString(current));
+                if(!trackingTouch) {
+                    seekBar.setProgress(current);
+                }
+            }
+        });
+    }
 }
