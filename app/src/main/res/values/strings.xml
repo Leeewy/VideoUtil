@@ -5,6 +5,7 @@
 
     <string name="youtube_player_error">Wystąpił problem z odtwarzaczem YouTube i zostanie on zamknięty</string>
     <string name="internet_disable">Brak dostępu do internetu.</string>
+    <string name="time_sample">0:00</string>
 
     <string-array name="nav_drawer_items">
         <item >Strona główna</item>

@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -35,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
 
         toolbarLayout = (RelativeLayout) findViewById(R.id.toolbar_layout);
         toolbar = (Toolbar) toolbarLayout.findViewById(R.id.toolbar);
+        toolbar.setTitle("TEST");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
 
         youTubePlayerSupportFragment = (YouTubePlayerSupportFragment)getSupportFragmentManager().findFragmentById(R.id.player_view);
@@ -44,15 +45,24 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         } else {
             showMessage(this, "", getString(R.string.internet_disable));
         }
-
-        youTubeDialogFragment = new YouTubeDialogFragment().newInstance();
-        youTubeDialogFragment.show(getSupportFragmentManager(), "YouTubeDialogFragment");
     }
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+        youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+
         youTubePlayer.setShowFullscreenButton(false);
+
         youTubePlayer.loadVideo("H-IVzFIRSVE");
+
+        initializeYouTubeDialogFragment(youTubePlayer);
+    }
+
+    private void initializeYouTubeDialogFragment(YouTubePlayer youTubePlayer) {
+        youTubeDialogFragment = new YouTubeDialogFragment().newInstance();
+        youTubeDialogFragment.show(getSupportFragmentManager(), "YouTubeDialogFragment");
+        youTubeDialogFragment.setYouTubePlayerSupportFragment(youTubePlayerSupportFragment);
+        youTubeDialogFragment.setYouTubePlayer(youTubePlayer);
     }
 
     @Override

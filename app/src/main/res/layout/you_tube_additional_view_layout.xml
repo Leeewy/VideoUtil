@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    style="@style/match_parent_match_parent" >
+
+    <TextView
+        android:id="@+id/video_title"
+        style="@style/video_title_text_style"
+        android:visibility="gone" />
+
+</RelativeLayout>
