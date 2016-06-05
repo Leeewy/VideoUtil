@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
 
         youTubePlayer.setShowFullscreenButton(false);
 
-        youTubePlayer.loadVideo("H-IVzFIRSVE");
-
         initializeYouTubeDialogFragment(youTubePlayer);
     }
 

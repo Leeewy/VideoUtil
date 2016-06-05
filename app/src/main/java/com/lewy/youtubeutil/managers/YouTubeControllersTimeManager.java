@@ -10,6 +10,8 @@ import com.lewy.youtubeutil.interfaces.YouTubeControllerCallback;
  */
 public class YouTubeControllersTimeManager extends AsyncTask {
 
+    private static final String TAG = "YouTubeTimeManager";
+
     private static final int TIME = 3000;
 
     private YouTubeControllerCallback youTubeControllerCallback;
@@ -20,7 +22,7 @@ public class YouTubeControllersTimeManager extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] params) {
-        Log.e("YouTubeTimeManager", "doInBackground()");
+        Log.e(TAG, "doInBackground()");
 
         try {
             Thread.sleep(TIME);

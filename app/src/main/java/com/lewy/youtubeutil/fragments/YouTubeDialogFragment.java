@@ -29,18 +29,22 @@ import com.lewy.youtubeutil.gui.NavigationDrawerItem;
 import com.lewy.youtubeutil.gui.NavigationDrawerListAdapter;
 import com.lewy.youtubeutil.interfaces.CurrentTimeCallback;
 import com.lewy.youtubeutil.interfaces.YouTubeControllerCallback;
+import com.lewy.youtubeutil.interfaces.YouTubeTitleCallback;
 import com.lewy.youtubeutil.managers.TimeCalculator;
 import com.lewy.youtubeutil.managers.YouTubeControllersTimeManager;
 import com.lewy.youtubeutil.managers.YouTubeCurrentTimeManager;
+import com.lewy.youtubeutil.managers.YouTubeTitleManager;
 
 import java.util.ArrayList;
 
 /**
  * Created by dawid on 15.05.2016.
  */
-public class YouTubeDialogFragment extends DialogFragment implements CurrentTimeCallback, YouTubeControllerCallback {
+public class YouTubeDialogFragment extends DialogFragment implements CurrentTimeCallback, YouTubeControllerCallback, YouTubeTitleCallback {
 
     private static final String TAG = "YouTubeDialogFragment";
+
+    private static final String YOU_TUBE_ID = "H-IVzFIRSVE";
 
     private static final int MILISECONDS = 1000;
 
@@ -89,6 +93,8 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     public void setYouTubePlayer(YouTubePlayer youTubePlayer) {
         youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
         youTubePlayer.setPlaybackEventListener(playbackEventListener);
+
+        youTubePlayer.loadVideo(YOU_TUBE_ID);
 
         this.youTubePlayer = youTubePlayer;
     }
@@ -212,9 +218,16 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         seekBar.setMax(maxSize);
     }
 
-    private void setVideoTitle(String s) {
-        videoTitle.setText(s);
-        videoTitle.setVisibility(View.VISIBLE);
+    private void setVideoTitle(final String title) {
+        if(getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    videoTitle.setText(title);
+                    videoTitle.setVisibility(View.VISIBLE);
+                }
+            });
+        }
     }
 
     private void hideYouTubeLoader(boolean isBuffering) {
@@ -268,9 +281,7 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         public void onLoading() {}
 
         @Override
-        public void onLoaded(String s) {
-            setVideoTitle(s);
-        }
+        public void onLoaded(String s) {}
 
         @Override
         public void onAdStarted() {}
@@ -282,6 +293,7 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
             startGettingCurrentTime();
 
             startYouTubeControllersTimeManager();
+            getVideoTitle(YOU_TUBE_ID);
         }
 
         @Override
@@ -338,13 +350,15 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     @Override
     public void hideControllers() {
         Log.i(TAG, "hideControllers()");
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                youTubeControllersLayout.setVisibility(View.INVISIBLE);
-                playStopViewButton.setVisibility(View.INVISIBLE);
-            }
-        });
+        if(getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    youTubeControllersLayout.setVisibility(View.INVISIBLE);
+                    playStopViewButton.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
     }
 
     private void showControllers() {
@@ -371,5 +385,22 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         } else {
             youTubeControllersTimeManager.execute();
         }
+    }
+
+    private void getVideoTitle(String id) {
+        YouTubeTitleManager youTubeTitleManager = new YouTubeTitleManager();
+        youTubeTitleManager.setYouTubeTitleManager(this);
+        youTubeTitleManager.setYouTubeUrl(id);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            youTubeTitleManager.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            youTubeTitleManager.execute();
+        }
+    }
+
+    @Override
+    public void title(String title) {
+        setVideoTitle(title);
     }
 }
