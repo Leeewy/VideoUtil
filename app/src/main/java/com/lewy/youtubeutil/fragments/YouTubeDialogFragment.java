@@ -1,16 +1,14 @@
 package com.lewy.youtubeutil.fragments;
 
 import android.app.Dialog;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +28,9 @@ import com.lewy.youtubeutil.R;
 import com.lewy.youtubeutil.gui.NavigationDrawerItem;
 import com.lewy.youtubeutil.gui.NavigationDrawerListAdapter;
 import com.lewy.youtubeutil.interfaces.CurrentTimeCallback;
+import com.lewy.youtubeutil.interfaces.YouTubeControllerCallback;
 import com.lewy.youtubeutil.managers.TimeCalculator;
+import com.lewy.youtubeutil.managers.YouTubeControllersTimeManager;
 import com.lewy.youtubeutil.managers.YouTubeCurrentTimeManager;
 
 import java.util.ArrayList;
@@ -38,11 +38,11 @@ import java.util.ArrayList;
 /**
  * Created by dawid on 15.05.2016.
  */
-public class YouTubeDialogFragment extends DialogFragment implements CurrentTimeCallback {
+public class YouTubeDialogFragment extends DialogFragment implements CurrentTimeCallback, YouTubeControllerCallback {
 
     private static final String TAG = "YouTubeDialogFragment";
 
-    private static final int MILISECOND = 1000;
+    private static final int MILISECONDS = 1000;
 
     private NavigationDrawerListAdapter navigationDrawerListAdapter;
     protected DrawerLayout mDrawerLayout;
@@ -52,7 +52,6 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     private String[] navMenuTitles;
 
     private ImageView playStopViewButton;
-    private ImageView playStopSliderButton;
 
     private TextView currentTimeView;
     private TextView maxTimeView;
@@ -61,10 +60,16 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
 
     private TextView videoTitle;
 
+    private LinearLayout youTubeControllersLayout;
+
+    private RelativeLayout youTubeControllers;
+
     private YouTubePlayerSupportFragment youTubePlayerSupportFragment;
     private YouTubePlayer youTubePlayer;
 
     private AsyncTask youTubeCurrentTimeManager;
+
+    private YouTubeControllersTimeManager youTubeControllersTimeManager;
 
     private boolean playing;
 
@@ -98,6 +103,7 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.getWindow().setDimAmount(0);
+
 
         return dialog;
     }
@@ -146,14 +152,6 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
             }
         });
 
-        playStopSliderButton = (ImageView)  v.findViewById(R.id.play_stop_slider_button);
-        playStopSliderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changePlayStopButtons();
-            }
-        });
-
         currentTimeView = (TextView) v.findViewById(R.id.current_time);
         maxTimeView = (TextView) v.findViewById(R.id.max_time);
 
@@ -162,7 +160,8 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(trackingTouch) {
-                    youTubePlayer.seekToMillis(progress * MILISECOND);
+                    youTubePlayer.seekToMillis(progress * MILISECONDS);
+                    startYouTubeControllersTimeManager();
                 }
             }
 
@@ -178,24 +177,37 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         });
 
         videoTitle = (TextView) v.findViewById(R.id.video_title);
+
+        youTubeControllersLayout = (LinearLayout) v.findViewById(R.id.you_tube_controllers_layout);
+
+        youTubeControllers = (RelativeLayout) v.findViewById(R.id.you_tube_controllers);
+        youTubeControllers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showControllers();
+                startYouTubeControllersTimeManager();
+            }
+        });
     }
 
     private void changePlayStopButtons() {
         if(playing) {
             playStopViewButton.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_action_av_play_circle_outline));
-            playStopSliderButton.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_action_av_play_circle_fill));
             youTubePlayer.pause();
+
+            stopYouTubeControllersTimeManager();
         } else {
             playStopViewButton.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_action_av_pause_circle_outline));
-            playStopSliderButton.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_action_av_pause_circle_fill));
             youTubePlayer.play();
+
+            startYouTubeControllersTimeManager();
         }
 
         playing = !playing;
     }
 
     private void setMaxTime() {
-        maxSize = youTubePlayer.getDurationMillis() / MILISECOND;
+        maxSize = youTubePlayer.getDurationMillis() / MILISECONDS;
         maxTimeView.setText(TimeCalculator.secondsToString(maxSize));
         seekBar.setMax(maxSize);
     }
@@ -251,21 +263,6 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         }
     }
 
-    private void setProgressBuffor(int currentTime) {
-//        Resources res = getResources();
-//        Drawable thumb = res.getDrawable(R.drawable.progress_thumb);
-//
-//        int h = seekBar.getMeasuredHeight();
-//        int w = seekBar.getMeasuredWidth() * (currentTime / maxSize);
-//
-//        Bitmap bmpOrg = ((BitmapDrawable)thumb).getBitmap();
-//        Bitmap bmpScaled = Bitmap.createScaledBitmap(bmpOrg, w, h, true);
-//        Drawable newThumb = new BitmapDrawable(res, bmpScaled);
-//        newThumb.setBounds(0, 0, newThumb.getIntrinsicWidth(), newThumb.getIntrinsicHeight());
-//
-//        seekBar.setThumb(newThumb);
-    }
-
     private YouTubePlayer.PlayerStateChangeListener playerStateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
         @Override
         public void onLoading() {}
@@ -283,12 +280,19 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
             changePlayStopButtons();
             setMaxTime();
             startGettingCurrentTime();
+
+            startYouTubeControllersTimeManager();
         }
 
         @Override
         public void onVideoEnded() {
             stopGettingCurrentTime();
             changePlayStopButtons();
+
+            youTubeControllersLayout.setVisibility(View.VISIBLE);
+            playStopViewButton.setVisibility(View.VISIBLE);
+
+            stopYouTubeControllersTimeManager();
         }
 
         @Override
@@ -316,17 +320,56 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
 
     @Override
     public void receivedCurrentTime(final int currentTime) {
+        if(getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int current = currentTime / MILISECONDS;
+                    currentTimeView.setText(TimeCalculator.secondsToString(current));
+
+                    if (!trackingTouch) {
+                        seekBar.setProgress(current);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void hideControllers() {
+        Log.i(TAG, "hideControllers()");
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                int current = currentTime / MILISECOND;
-                currentTimeView.setText(TimeCalculator.secondsToString(current));
-                setProgressBuffor(currentTime);
-
-                if(!trackingTouch) {
-                    seekBar.setProgress(current);
-                }
+                youTubeControllersLayout.setVisibility(View.INVISIBLE);
+                playStopViewButton.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    private void showControllers() {
+        Log.i(TAG, "showControllers()");
+
+        youTubeControllersLayout.setVisibility(View.VISIBLE);
+        playStopViewButton.setVisibility(View.VISIBLE);
+    }
+
+    private void stopYouTubeControllersTimeManager() {
+        if(youTubeControllersTimeManager != null) {
+            youTubeControllersTimeManager.cancel(true);
+        }
+    }
+
+    private void startYouTubeControllersTimeManager() {
+        stopYouTubeControllersTimeManager();
+
+        youTubeControllersTimeManager = new YouTubeControllersTimeManager();
+        youTubeControllersTimeManager.setYouTubeControllerCallback(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            youTubeControllersTimeManager.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            youTubeControllersTimeManager.execute();
+        }
     }
 }
