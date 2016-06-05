@@ -206,6 +206,10 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
             playStopViewButton.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_action_av_pause_circle_outline));
             youTubePlayer.play();
 
+            if(videoTitle.getVisibility() == View.GONE) {
+                getVideoTitle(YOU_TUBE_ID);
+            }
+
             startYouTubeControllersTimeManager();
         }
 
@@ -225,6 +229,18 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
                 public void run() {
                     videoTitle.setText(title);
                     videoTitle.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+    }
+
+    private void hideVideoTitle() {
+        if(getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    videoTitle.setText("");
+                    videoTitle.setVisibility(View.GONE);
                 }
             });
         }
@@ -305,6 +321,8 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
             playStopViewButton.setVisibility(View.VISIBLE);
 
             stopYouTubeControllersTimeManager();
+
+            hideVideoTitle();
         }
 
         @Override
