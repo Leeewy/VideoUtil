@@ -4,15 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:isScrollContainer="false"
-    android:layout_gravity="left|start"
+    android:layout_gravity="left"
+    android:gravity="center"
     android:background="@color/colorAccent" >
 
-    <ListView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/menu_list"
-        style="@style/match_parent_match_parent"
-        android:choiceMode="singleChoice"
-        android:divider="@color/colorPrimaryDark"
-        android:dividerHeight="1dp" />
+    <TextView
+        style="@style/menu_text_style"
+        android:text="Place for your menu"/>
 
 </LinearLayout>

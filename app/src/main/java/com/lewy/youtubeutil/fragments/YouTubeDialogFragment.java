@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -25,18 +24,13 @@ import android.widget.TextView;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.lewy.youtubeutil.R;
-import com.lewy.youtubeutil.gui.NavigationDrawerItem;
-import com.lewy.youtubeutil.gui.NavigationDrawerListAdapter;
 import com.lewy.youtubeutil.interfaces.CurrentTimeCallback;
 import com.lewy.youtubeutil.interfaces.YouTubeControllerCallback;
 import com.lewy.youtubeutil.interfaces.YouTubeTitleCallback;
-import com.lewy.youtubeutil.managers.MenuManager;
 import com.lewy.youtubeutil.managers.TimeCalculator;
 import com.lewy.youtubeutil.managers.YouTubeControllersTimeManager;
 import com.lewy.youtubeutil.managers.YouTubeCurrentTimeManager;
 import com.lewy.youtubeutil.managers.YouTubeTitleManager;
-
-import java.util.ArrayList;
 
 /**
  * Created by dawid on 15.05.2016.
@@ -48,6 +42,8 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     private static final String YOU_TUBE_ID = "H-IVzFIRSVE";
 
     private static final int MILISECONDS = 1000;
+
+    protected static DrawerLayout mDrawerLayout;
 
     private ImageView playStopViewButton;
 
@@ -111,13 +107,14 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final LinearLayout v = (LinearLayout) inflater.inflate(R.layout.you_tube_dialog_fragment, container, true);
 
-        MenuManager.buildMenu(v, getContext());
         initAllViews(v);
 
         return v;
     }
 
     private void initAllViews(LinearLayout v) {
+        mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
+
         playStopViewButton = (ImageView) v.findViewById(R.id.play_stop_view_button);
         playStopViewButton.setOnClickListener(new View.OnClickListener() {
             @Override

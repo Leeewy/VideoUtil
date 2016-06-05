@@ -59,4 +59,12 @@
         <item name="android:thumb">@drawable/progress_thumb</item>
     </style>
 
+    <style name="menu_text_style" parent="match_parent_wrap_content">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/menu_text_size</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

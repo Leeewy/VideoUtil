@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
 
         toolbarLayout = (RelativeLayout) findViewById(R.id.toolbar_layout);
         toolbar = (Toolbar) toolbarLayout.findViewById(R.id.toolbar);
-        toolbar.setTitle("TEST");
+        toolbar.setTitle(getString(R.string.app_name));
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
 
