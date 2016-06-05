@@ -30,6 +30,7 @@ import com.lewy.youtubeutil.gui.NavigationDrawerListAdapter;
 import com.lewy.youtubeutil.interfaces.CurrentTimeCallback;
 import com.lewy.youtubeutil.interfaces.YouTubeControllerCallback;
 import com.lewy.youtubeutil.interfaces.YouTubeTitleCallback;
+import com.lewy.youtubeutil.managers.MenuManager;
 import com.lewy.youtubeutil.managers.TimeCalculator;
 import com.lewy.youtubeutil.managers.YouTubeControllersTimeManager;
 import com.lewy.youtubeutil.managers.YouTubeCurrentTimeManager;
@@ -47,13 +48,6 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     private static final String YOU_TUBE_ID = "H-IVzFIRSVE";
 
     private static final int MILISECONDS = 1000;
-
-    private NavigationDrawerListAdapter navigationDrawerListAdapter;
-    protected DrawerLayout mDrawerLayout;
-    protected ListView mDrawerList;
-
-    private ArrayList<NavigationDrawerItem> navigationDrawerItem;
-    private String[] navMenuTitles;
 
     private ImageView playStopViewButton;
 
@@ -110,7 +104,6 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.getWindow().setDimAmount(0);
 
-
         return dialog;
     }
 
@@ -118,35 +111,10 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final LinearLayout v = (LinearLayout) inflater.inflate(R.layout.you_tube_dialog_fragment, container, true);
 
-        buildMenu(v);
+        MenuManager.buildMenu(v, getContext());
         initAllViews(v);
 
         return v;
-    }
-
-    private void buildMenu(LinearLayout v) {
-        mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) v.findViewById(R.id.menu_list);
-
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
-
-        navigationDrawerItem = new ArrayList<>();
-        navigationDrawerItem.add(new NavigationDrawerItem(navMenuTitles[0]));
-        navigationDrawerItem.add(new NavigationDrawerItem(navMenuTitles[1]));
-        navigationDrawerItem.add(new NavigationDrawerItem(navMenuTitles[2]));
-        navigationDrawerItem.add(new NavigationDrawerItem(navMenuTitles[3]));
-
-        navigationDrawerListAdapter = new NavigationDrawerListAdapter(getContext(), navigationDrawerItem);
-
-        mDrawerList.setAdapter(navigationDrawerListAdapter);
-        mDrawerList.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        mDrawerLayout.closeDrawers();
-                    }
-                }
-        );
     }
 
     private void initAllViews(LinearLayout v) {
