@@ -50,4 +50,13 @@
         <item name="android:textStyle">italic|bold</item>
     </style>
 
+    <style name="you_tube_progress_style" >
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:progressDrawable">@drawable/progress</item>
+        <item name="android:thumb">@drawable/progress_thumb</item>
+    </style>
+
 </resources>

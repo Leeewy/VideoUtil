@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white_transparent">#99ffffff</color>
     <color name="transparent">#00000000</color>
+
+    <color name="progress_background_color">#FF555555</color>
 </resources>

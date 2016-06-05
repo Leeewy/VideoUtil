@@ -1,13 +1,16 @@
 package com.lewy.youtubeutil.fragments;
 
 import android.app.Dialog;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +69,8 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     private boolean playing;
 
     private boolean trackingTouch;
+
+    private int maxSize;
 
     public static YouTubeDialogFragment newInstance(){
         YouTubeDialogFragment youTubeDialogFragment = new YouTubeDialogFragment();
@@ -190,9 +195,9 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     }
 
     private void setMaxTime() {
-        int max = youTubePlayer.getDurationMillis() / MILISECOND;
-        maxTimeView.setText(TimeCalculator.secondsToString(max));
-        seekBar.setMax(max);
+        maxSize = youTubePlayer.getDurationMillis() / MILISECOND;
+        maxTimeView.setText(TimeCalculator.secondsToString(maxSize));
+        seekBar.setMax(maxSize);
     }
 
     private void setVideoTitle(String s) {
@@ -246,6 +251,21 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         }
     }
 
+    private void setProgressBuffor(int currentTime) {
+//        Resources res = getResources();
+//        Drawable thumb = res.getDrawable(R.drawable.progress_thumb);
+//
+//        int h = seekBar.getMeasuredHeight();
+//        int w = seekBar.getMeasuredWidth() * (currentTime / maxSize);
+//
+//        Bitmap bmpOrg = ((BitmapDrawable)thumb).getBitmap();
+//        Bitmap bmpScaled = Bitmap.createScaledBitmap(bmpOrg, w, h, true);
+//        Drawable newThumb = new BitmapDrawable(res, bmpScaled);
+//        newThumb.setBounds(0, 0, newThumb.getIntrinsicWidth(), newThumb.getIntrinsicHeight());
+//
+//        seekBar.setThumb(newThumb);
+    }
+
     private YouTubePlayer.PlayerStateChangeListener playerStateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
         @Override
         public void onLoading() {}
@@ -277,19 +297,13 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
 
     private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {
         @Override
-        public void onPlaying() {
-            startGettingCurrentTime();
-        }
+        public void onPlaying() {}
 
         @Override
-        public void onPaused() {
-            stopGettingCurrentTime();
-        }
+        public void onPaused() {}
 
         @Override
-        public void onStopped() {
-            stopGettingCurrentTime();
-        }
+        public void onStopped() {}
 
         @Override
         public void onBuffering(boolean b) {
@@ -307,6 +321,8 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
             public void run() {
                 int current = currentTime / MILISECOND;
                 currentTimeView.setText(TimeCalculator.secondsToString(current));
+                setProgressBuffor(currentTime);
+
                 if(!trackingTouch) {
                     seekBar.setProgress(current);
                 }
