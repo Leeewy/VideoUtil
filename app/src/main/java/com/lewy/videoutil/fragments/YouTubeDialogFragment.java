@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,7 @@ import android.widget.TextView;
 
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+
 import com.lewy.videoutil.MainActivity;
 import com.lewy.videoutil.R;
 import com.lewy.videoutil.interfaces.CurrentTimeCallback;
@@ -34,11 +34,9 @@ import com.lewy.videoutil.managers.YouTubeCurrentTimeManager;
 import com.lewy.videoutil.managers.YouTubeTitleManager;
 
 /**
- * Created by dawid on 15.05.2016.
+ * Created by lewy on 15.05.2016.
  */
 public class YouTubeDialogFragment extends DialogFragment implements CurrentTimeCallback, YouTubeControllerCallback, YouTubeTitleCallback {
-
-    private static final String TAG = "YouTubeDialogFragment";
 
     private static final String YOU_TUBE_ID = "H-IVzFIRSVE";
 
@@ -105,6 +103,8 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.getWindow().setDimAmount(0);
 
+        setCancelable(false);
+
         return dialog;
     }
 
@@ -112,12 +112,6 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final LinearLayout v = (LinearLayout) inflater.inflate(R.layout.you_tube_dialog_fragment, container, true);
 
-        initAllViews(v);
-
-        return v;
-    }
-
-    private void initAllViews(LinearLayout v) {
         mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
 
         playStopViewButton = (ImageView) v.findViewById(R.id.play_stop_view_button);
@@ -164,6 +158,8 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
                 startYouTubeControllersTimeManager();
             }
         });
+
+        return v;
     }
 
     @Override

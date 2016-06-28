@@ -10,7 +10,7 @@ import com.lewy.videoutil.R;
 import com.lewy.videoutil.interfaces.MessageDialogCallback;
 
 /**
- * Created by dawid on 15.05.2016.
+ * Created by lewy on 15.05.2016.
  */
 public class ShowMessageDialogFragment extends DialogFragment {
 
@@ -40,14 +40,7 @@ public class ShowMessageDialogFragment extends DialogFragment {
                         }
                     }
                 })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        if (messageDialogCallback != null) {
-                            messageDialogCallback.messageClose();
-                        }
-                    }
-                });
+                .setCancelable(false);
 
         setCancelable(false);
 

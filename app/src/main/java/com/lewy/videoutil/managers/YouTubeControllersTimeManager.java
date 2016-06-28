@@ -1,16 +1,13 @@
 package com.lewy.videoutil.managers;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.lewy.videoutil.interfaces.YouTubeControllerCallback;
 
 /**
- * Created by dawid on 05.06.2016.
+ * Created by lewy on 05.06.2016.
  */
 public class YouTubeControllersTimeManager extends AsyncTask {
-
-    private static final String TAG = "YouTubeTimeManager";
 
     private static final int TIME = 3000;
 
@@ -22,8 +19,6 @@ public class YouTubeControllersTimeManager extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] params) {
-        Log.e(TAG, "doInBackground()");
-
         try {
             Thread.sleep(TIME);
 

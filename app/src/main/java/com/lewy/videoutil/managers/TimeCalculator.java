@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 /**
- * Created by dawid on 2016-06-03.
+ * Created by lewy on 2016-06-03.
  */
 public class TimeCalculator {
 

@@ -6,7 +6,7 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.lewy.videoutil.interfaces.CurrentTimeCallback;
 
 /**
- * Created by dawid on 05.06.2016.
+ * Created by lewy on 05.06.2016.
  */
 public class YouTubeCurrentTimeManager extends AsyncTask {
 

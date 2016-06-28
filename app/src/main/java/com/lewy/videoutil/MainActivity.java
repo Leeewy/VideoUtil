@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
     protected void onCreate(Bundle savedInstanceState) {
         getLayoutInflater().setFactory(this);
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         toolbarLayout = (RelativeLayout) findViewById(R.id.toolbar_layout);
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         super.onResume();
 
         if(youTubePlayerSupportFragment == null) {
-            Log.i(TAG, "youTubePlayerSupportFragment == null");
             youTubePlayerSupportFragment = (YouTubePlayerSupportFragment) getSupportFragmentManager().findFragmentById(R.id.player_view);
 
             if (NetworkManager.isNetworkAvailable(this)) {
@@ -57,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-        Log.i(TAG, "onInitializationSuccess()");
-
         youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
 
         youTubePlayer.setShowFullscreenButton(false);

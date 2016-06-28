@@ -1,7 +1,6 @@
 package com.lewy.videoutil.managers;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.lewy.videoutil.interfaces.YouTubeTitleCallback;
 
@@ -11,11 +10,9 @@ import org.json.JSONObject;
 import java.net.URL;
 
 /**
- * Created by dawid on 05.06.2016.
+ * Created by lewy on 05.06.2016.
  */
 public class YouTubeTitleManager extends AsyncTask {
-
-    private static final String TAG = "YouTubeTitleManager";
 
     private static final String YOU_TUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
@@ -34,8 +31,6 @@ public class YouTubeTitleManager extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
         try {
-            Log.i(TAG, "doInBackground()");
-
             if (youTubeUrl != null) {
                 URL url = new URL("http://www.youtube.com/oembed?url=" + YOU_TUBE_BASE_URL + youTubeUrl + "&format=json");
 
