@@ -1,9 +1,9 @@
-package com.lewy.youtubeutil.managers;
+package com.lewy.videoutil.managers;
 
 import android.os.AsyncTask;
 
 import com.google.android.youtube.player.YouTubePlayer;
-import com.lewy.youtubeutil.interfaces.CurrentTimeCallback;
+import com.lewy.videoutil.interfaces.CurrentTimeCallback;
 
 /**
  * Created by dawid on 05.06.2016.

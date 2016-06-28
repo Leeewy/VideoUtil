@@ -1,4 +1,4 @@
-package com.lewy.youtubeutil.managers;
+package com.lewy.videoutil.managers;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

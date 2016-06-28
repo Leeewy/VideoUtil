@@ -1,4 +1,4 @@
-package com.lewy.youtubeutil;
+package com.lewy.videoutil;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,10 +9,10 @@ import android.widget.RelativeLayout;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
-import com.lewy.youtubeutil.fragments.ShowMessageDialogFragment;
-import com.lewy.youtubeutil.fragments.YouTubeDialogFragment;
-import com.lewy.youtubeutil.interfaces.MessageDialogCallback;
-import com.lewy.youtubeutil.managers.NetworkManager;
+import com.lewy.videoutil.fragments.ShowMessageDialogFragment;
+import com.lewy.videoutil.fragments.YouTubeDialogFragment;
+import com.lewy.videoutil.interfaces.MessageDialogCallback;
+import com.lewy.videoutil.managers.NetworkManager;
 
 public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener, MessageDialogCallback {
 
@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         youTubeDialogFragment.show(getSupportFragmentManager(), "YouTubeDialogFragment");
         youTubeDialogFragment.setYouTubePlayerSupportFragment(youTubePlayerSupportFragment);
         youTubeDialogFragment.setYouTubePlayer(youTubePlayer);
-//        youTubeDialogFragment.setRetainInstance(true);
     }
 
     @Override

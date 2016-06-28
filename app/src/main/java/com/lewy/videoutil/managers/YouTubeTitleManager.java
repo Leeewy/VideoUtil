@@ -1,9 +1,9 @@
-package com.lewy.youtubeutil.managers;
+package com.lewy.videoutil.managers;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.lewy.youtubeutil.interfaces.YouTubeTitleCallback;
+import com.lewy.videoutil.interfaces.YouTubeTitleCallback;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;

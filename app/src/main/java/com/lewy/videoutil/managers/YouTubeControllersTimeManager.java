@@ -1,9 +1,9 @@
-package com.lewy.youtubeutil.managers;
+package com.lewy.videoutil.managers;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.lewy.youtubeutil.interfaces.YouTubeControllerCallback;
+import com.lewy.videoutil.interfaces.YouTubeControllerCallback;
 
 /**
  * Created by dawid on 05.06.2016.

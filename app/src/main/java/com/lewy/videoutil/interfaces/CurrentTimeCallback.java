@@ -1,4 +1,4 @@
-package com.lewy.youtubeutil.interfaces;
+package com.lewy.videoutil.interfaces;
 
 /**
  * Created by dawid on 05.06.2016.

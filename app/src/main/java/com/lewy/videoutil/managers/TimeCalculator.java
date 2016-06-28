@@ -1,4 +1,4 @@
-package com.lewy.youtubeutil.managers;
+package com.lewy.videoutil.managers;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

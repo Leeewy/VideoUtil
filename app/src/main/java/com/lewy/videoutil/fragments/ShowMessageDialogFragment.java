@@ -1,4 +1,4 @@
-package com.lewy.youtubeutil.fragments;
+package com.lewy.videoutil.fragments;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
-import com.lewy.youtubeutil.R;
-import com.lewy.youtubeutil.interfaces.MessageDialogCallback;
+import com.lewy.videoutil.R;
+import com.lewy.videoutil.interfaces.MessageDialogCallback;
 
 /**
  * Created by dawid on 15.05.2016.

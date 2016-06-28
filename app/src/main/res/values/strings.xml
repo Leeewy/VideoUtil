@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">YouTubeUtil</string>
+    <string name="app_name">VideoUtil</string>
 
     <string name="ok">OK</string>
 
-    <string name="youtube_player_error">Wystąpił problem z odtwarzaczem YouTube i zostanie on zamknięty</string>
-    <string name="internet_disable">Brak dostępu do internetu.</string>
+    <string name="youtube_player_error">There was a problem with the YouTube player and it will be closed</string>
+    <string name="internet_disable">No network connection.</string>
     <string name="time_sample">0:00</string>
 
     <array name="nav_drawer_icons">

@@ -1,4 +1,4 @@
-package com.lewy.youtubeutil.fragments;
+package com.lewy.videoutil.fragments;
 
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
@@ -22,16 +22,16 @@ import android.widget.TextView;
 
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
-import com.lewy.youtubeutil.MainActivity;
-import com.lewy.youtubeutil.R;
-import com.lewy.youtubeutil.interfaces.CurrentTimeCallback;
-import com.lewy.youtubeutil.interfaces.YouTubeControllerCallback;
-import com.lewy.youtubeutil.interfaces.YouTubeTitleCallback;
-import com.lewy.youtubeutil.managers.NetworkManager;
-import com.lewy.youtubeutil.managers.TimeCalculator;
-import com.lewy.youtubeutil.managers.YouTubeControllersTimeManager;
-import com.lewy.youtubeutil.managers.YouTubeCurrentTimeManager;
-import com.lewy.youtubeutil.managers.YouTubeTitleManager;
+import com.lewy.videoutil.MainActivity;
+import com.lewy.videoutil.R;
+import com.lewy.videoutil.interfaces.CurrentTimeCallback;
+import com.lewy.videoutil.interfaces.YouTubeControllerCallback;
+import com.lewy.videoutil.interfaces.YouTubeTitleCallback;
+import com.lewy.videoutil.managers.NetworkManager;
+import com.lewy.videoutil.managers.TimeCalculator;
+import com.lewy.videoutil.managers.YouTubeControllersTimeManager;
+import com.lewy.videoutil.managers.YouTubeCurrentTimeManager;
+import com.lewy.videoutil.managers.YouTubeTitleManager;
 
 /**
  * Created by dawid on 15.05.2016.
