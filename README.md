@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is open-source project for everyone who wants to show something over YouTubePlayer view.
+This is open-source project for everyone who wants to show something over YouTubePlayer view when it still plays.
 
 ## Used libs
 
@@ -21,10 +21,13 @@ The rest depends on your needs and can be done in any way.
 ## Examples
 
 Normal View
+
 ![Normal View](screenshots/normal_view.png)
 
 Controllers
+
 ![Controllers](screenshots/controllers.png)
 
 Menu
+
 ![Menu](screenshots/menu.png)
