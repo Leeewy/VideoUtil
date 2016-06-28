@@ -49,6 +49,8 @@ public class ShowMessageDialogFragment extends DialogFragment {
                     }
                 });
 
+        setCancelable(false);
+
         return builder.create();
     }
 }

@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -23,10 +22,12 @@ import android.widget.TextView;
 
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.lewy.youtubeutil.MainActivity;
 import com.lewy.youtubeutil.R;
 import com.lewy.youtubeutil.interfaces.CurrentTimeCallback;
 import com.lewy.youtubeutil.interfaces.YouTubeControllerCallback;
 import com.lewy.youtubeutil.interfaces.YouTubeTitleCallback;
+import com.lewy.youtubeutil.managers.NetworkManager;
 import com.lewy.youtubeutil.managers.TimeCalculator;
 import com.lewy.youtubeutil.managers.YouTubeControllersTimeManager;
 import com.lewy.youtubeutil.managers.YouTubeCurrentTimeManager;
@@ -41,7 +42,7 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
 
     private static final String YOU_TUBE_ID = "H-IVzFIRSVE";
 
-    private static final int MILISECONDS = 1000;
+    private static final int MILLISECONDS = 1000;
 
     protected static DrawerLayout mDrawerLayout;
 
@@ -70,6 +71,10 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     private boolean trackingTouch;
 
     private int maxSize;
+
+    private Integer currentTime;
+
+    private boolean startAfterBackFromBackground;
 
     public static YouTubeDialogFragment newInstance(){
         YouTubeDialogFragment youTubeDialogFragment = new YouTubeDialogFragment();
@@ -131,7 +136,7 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(trackingTouch) {
-                    youTubePlayer.seekToMillis(progress * MILISECONDS);
+                    youTubePlayer.seekToMillis(progress * MILLISECONDS);
                     startYouTubeControllersTimeManager();
                 }
             }
@@ -161,6 +166,25 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         });
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopGettingCurrentTime();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(currentTime != null) {
+            if (NetworkManager.isNetworkAvailable(getContext())) {
+                startAfterBackFromBackground = true;
+                youTubePlayer.loadVideo(YOU_TUBE_ID);
+            } else {
+                ((MainActivity)getActivity()).showMessage(null, "", getString(R.string.internet_disable));
+            }
+        }
+    }
+
     private void changePlayStopButtons() {
         if(playing) {
             playStopViewButton.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_action_av_play_circle_outline));
@@ -182,7 +206,7 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     }
 
     private void setMaxTime() {
-        maxSize = youTubePlayer.getDurationMillis() / MILISECONDS;
+        maxSize = youTubePlayer.getDurationMillis() / MILLISECONDS;
         maxTimeView.setText(TimeCalculator.secondsToString(maxSize));
         seekBar.setMax(maxSize);
     }
@@ -262,19 +286,25 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         public void onLoading() {}
 
         @Override
-        public void onLoaded(String s) {}
+        public void onLoaded(String s) {
+            if(startAfterBackFromBackground) {
+                youTubePlayer.seekToMillis(currentTime);
+            }
+        }
 
         @Override
         public void onAdStarted() {}
 
         @Override
         public void onVideoStarted() {
-            changePlayStopButtons();
-            setMaxTime();
-            startGettingCurrentTime();
+            if(!startAfterBackFromBackground) {
+                changePlayStopButtons();
+                setMaxTime();
+                startGettingCurrentTime();
 
-            startYouTubeControllersTimeManager();
-            getVideoTitle(YOU_TUBE_ID);
+                startYouTubeControllersTimeManager();
+                getVideoTitle(YOU_TUBE_ID);
+            }
         }
 
         @Override
@@ -310,29 +340,38 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
         }
 
         @Override
-        public void onSeekTo(int i) {}
+        public void onSeekTo(int i) {
+            if(startAfterBackFromBackground) {
+                startAfterBackFromBackground = false;
+
+                seekBar.setProgress(currentTime / MILLISECONDS);
+                youTubePlayer.play();
+            }
+        }
     };
 
     @Override
     public void receivedCurrentTime(final int currentTime) {
-        if(getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    int current = currentTime / MILISECONDS;
-                    currentTimeView.setText(TimeCalculator.secondsToString(current));
+        if(!startAfterBackFromBackground) {
+            this.currentTime = currentTime;
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int current = currentTime / MILLISECONDS;
+                        currentTimeView.setText(TimeCalculator.secondsToString(current));
 
-                    if (!trackingTouch) {
-                        seekBar.setProgress(current);
+                        if (!trackingTouch) {
+                            seekBar.setProgress(current);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
     @Override
     public void hideControllers() {
-        Log.i(TAG, "hideControllers()");
         if(getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -345,8 +384,6 @@ public class YouTubeDialogFragment extends DialogFragment implements CurrentTime
     }
 
     private void showControllers() {
-        Log.i(TAG, "showControllers()");
-
         youTubeControllersLayout.setVisibility(View.VISIBLE);
         playStopViewButton.setVisibility(View.VISIBLE);
     }

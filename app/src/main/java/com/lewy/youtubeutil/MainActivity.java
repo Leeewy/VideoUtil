@@ -37,18 +37,28 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         toolbar.setTitle(getString(R.string.app_name));
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
+    }
 
-        youTubePlayerSupportFragment = (YouTubePlayerSupportFragment)getSupportFragmentManager().findFragmentById(R.id.player_view);
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        if(NetworkManager.isNetworkAvailable(this)) {
-            youTubePlayerSupportFragment.initialize(getString(R.string.youtube_api_key), this);
-        } else {
-            showMessage(this, "", getString(R.string.internet_disable));
+        if(youTubePlayerSupportFragment == null) {
+            Log.i(TAG, "youTubePlayerSupportFragment == null");
+            youTubePlayerSupportFragment = (YouTubePlayerSupportFragment) getSupportFragmentManager().findFragmentById(R.id.player_view);
+
+            if (NetworkManager.isNetworkAvailable(this)) {
+                youTubePlayerSupportFragment.initialize(getString(R.string.youtube_api_key), this);
+            } else {
+                showMessage(this, "", getString(R.string.internet_disable));
+            }
         }
     }
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+        Log.i(TAG, "onInitializationSuccess()");
+
         youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
 
         youTubePlayer.setShowFullscreenButton(false);
@@ -61,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         youTubeDialogFragment.show(getSupportFragmentManager(), "YouTubeDialogFragment");
         youTubeDialogFragment.setYouTubePlayerSupportFragment(youTubePlayerSupportFragment);
         youTubeDialogFragment.setYouTubePlayer(youTubePlayer);
+//        youTubeDialogFragment.setRetainInstance(true);
     }
 
     @Override
