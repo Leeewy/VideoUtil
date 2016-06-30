@@ -31,3 +31,7 @@ Controllers
 Menu
 
 ![Menu](screenshots/menu.png)
+
+## Comments
+
+Remember to change YouTube API key on yours in keys.xml file!
